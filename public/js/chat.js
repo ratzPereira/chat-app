@@ -22,23 +22,23 @@ const {username, room} = Qs.parse(location.search, { ignoreQueryPrefix: true }) 
 
 const autoScroll = () => {
     //New message element
-    const $newMessage = $messages.lastElementChild
+    const $newMessage = $messages.lastElementChild  //we get the last message send ( the element)
 
     //Height of the new message
-    const newMessageStyles = getComputedStyle($newMessage)
-    const newMessageMargin = parseInt(newMessageStyles.marginBottom)
-    const newMessageHeight = $newMessage.offsetHeight + newMessageMargin
+    const newMessageStyles = getComputedStyle($newMessage)  //whe get here the value of the margin bottom
+    const newMessageMargin = parseInt(newMessageStyles.marginBottom) // we get that value in this variable
+    const newMessageHeight = $newMessage.offsetHeight + newMessageMargin // now we know the height of the margin we can calculate the total height 
 
     //visible height
-    const visibleHeight = $messages.offsetHeight
+    const visibleHeight = $messages.offsetHeight // we get the off set height of the message element
 
     //Height of messages container
-    const containerHeight = $messages.scrollHeight
+    const containerHeight = $messages.scrollHeight  // here we get the total height of the container ( what we see and what not)
 
     //How far have I scrolled
-    const scrollOffSet = $messages.scrollTop + visibleHeight
+    const scrollOffSet = $messages.scrollTop + visibleHeight // here we know how far down we scroll
 
-    if (containerHeight - newMessageHeight <= scrollOffSet) {
+    if (containerHeight - newMessageHeight <= scrollOffSet) {  // to total height we subst the message element height and if that number is < or = the scroll of set 
         $messages.scrollTop = $messages.scrollHeight
     }
 }
