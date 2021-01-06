@@ -13,6 +13,9 @@ const messageTemplate = document.querySelector('#message-template').innerHTML
 const locationTemplate = document.querySelector('#location-template').innerHTML
 
 
+//Options
+const {username, room} = Qs.parse(location.search, { ingoreQueryPrefix: true }) //The location.search property contains the query string of an URI (including the ?) , we parse it and save the room and the username
+
 
 socket.on('message', (message) => {
     console.log(message.text)
@@ -83,3 +86,6 @@ $locationButton.addEventListener('click', () => {
         })
     })
 })
+
+
+socket.emit('join', {username, room})

@@ -23,8 +23,15 @@ app.use(express.static(publicDirectoryPath))
 io.on('connection', (socket) => {
     console.log('new websocket connection')
 
-    socket.emit('message', generateMessage('Welcome!'))
-    socket.broadcast.emit('message', generateMessage('New user has joined the chat'))
+
+    socket.on('join', ({ username, room }) => {
+        socket.join(room)
+
+        socket.emit('message', generateMessage('Welcome!'))
+        socket.broadcast.to(room).emit('message', generateMessage(`${username} has joined!`)) // will emit the message for everyone in that specific room
+
+    })
+
 
     socket.on('send-msg', (message, callback) => {
         const filter = new Filter()
@@ -56,3 +63,8 @@ server.listen(port, ()=> {
     console.log('server running on port ' + port)
 })
 
+
+
+
+// socket.emit, io.emit, socket.broadcast.emit
+//io.to.emit, socket.broadcast.to.emit  <- same as above but only in the specific room  to()
