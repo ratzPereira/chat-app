@@ -6,21 +6,24 @@ const $messageFormInput = $messageForm.querySelector('input')
 const $messageFormButton = $messageForm.querySelector('button')
 const $locationButton = document.querySelector('#send-location')
 const $messages = document.querySelector('#messages')
+const $sidebar = document.querySelector('#sidebar')
 
 
 //templates
 const messageTemplate = document.querySelector('#message-template').innerHTML
 const locationTemplate = document.querySelector('#location-template').innerHTML
+const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML
 
 
 //Options
-const {username, room} = Qs.parse(location.search, { ingoreQueryPrefix: true }) //The location.search property contains the query string of an URI (including the ?) , we parse it and save the room and the username
-
+const {username, room} = Qs.parse(location.search, { ignoreQueryPrefix: true }) //The location.search property contains the query string of an URI (including the ?) , we parse it and save the room and the username
+console.log(username)
 
 socket.on('message', (message) => {
     console.log(message.text)
 
-    const html = Mustache.render(messageTemplate, {          //render the content
+    const html = Mustache.render(messageTemplate, { 
+        username: message.username,         //render the content
         message: message.text,
         createdAt: moment(message.createdAt).format('HH:mm A')
     }) 
@@ -34,11 +37,23 @@ socket.on('locationMessage', (message) => {
 
     console.log(message)
     const html = Mustache.render(locationTemplate, {
+        username: message.username,
         url: message.url,
         createdAt: moment(message.createdAt).format('HH:mm A')
     })
     console.log(html)
     $messages.insertAdjacentHTML('beforeend', html)
+    
+})
+
+
+socket.on('roomData', ({ room, users }) => {
+    
+    const html = Mustache.render(sidebarTemplate, {
+        users,
+        room
+    })
+    document.querySelector('#sidebar').innerHTML = html
 })
 
 
@@ -88,4 +103,9 @@ $locationButton.addEventListener('click', () => {
 })
 
 
-socket.emit('join', {username, room})
+socket.emit('join', {username, room}, (error) => {
+    if(error) {
+        alert(error)
+        location.href = '/'
+    }
+})
