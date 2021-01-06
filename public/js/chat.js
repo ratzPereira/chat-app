@@ -6,7 +6,6 @@ const $messageFormInput = $messageForm.querySelector('input')
 const $messageFormButton = $messageForm.querySelector('button')
 const $locationButton = document.querySelector('#send-location')
 const $messages = document.querySelector('#messages')
-const $location = document.querySelector('#location')
 
 
 //templates
@@ -16,30 +15,34 @@ const locationTemplate = document.querySelector('#location-template').innerHTML
 
 
 socket.on('message', (message) => {
-    console.log(message)
+    console.log(message.text)
 
     const html = Mustache.render(messageTemplate, {          //render the content
         message: message.text,
         createdAt: moment(message.createdAt).format('HH:mm A')
     }) 
-
+    
     $messages.insertAdjacentHTML('beforeend', html)
+    
 })
 
 
-socket.on('locationMessage', (location) => {
+socket.on('locationMessage', (message) => {
 
+    console.log(message)
     const html = Mustache.render(locationTemplate, {
-        location
+        url: message.url,
+        createdAt: moment(message.createdAt).format('HH:mm A')
     })
-    $location.insertAdjacentHTML('beforeend', html)
+    console.log(html)
+    $messages.insertAdjacentHTML('beforeend', html)
 })
 
 
 
 $messageForm.addEventListener('submit', (e) =>{
     e.preventDefault()
-
+    
     $messageFormButton.setAttribute('disabled', 'disabled')  //disable the button form util a new message is written 
     
     const message = e.target.elements.message.value       //the message in e.target.elements.message.value is the input name in html. so we don't mess up with multiple input forms
@@ -59,7 +62,6 @@ $messageForm.addEventListener('submit', (e) =>{
         console.log('The message was delivered!')
     })
 })
-
 
 
 
